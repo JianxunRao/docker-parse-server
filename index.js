@@ -7,7 +7,7 @@ var ParseServer = require('parse-server').ParseServer;
 var links = require('docker-links').parseLinks(process.env);
 var fs = require('fs');
 var AzureStorageAdapter = require('parse-server-azure-storage').AzureStorageAdapter;
-var OSSAdapter = require('parse-server-oss-adapter2');
+var OSSAdapter = require('parse-server-oss-adapter');
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI
 
@@ -171,9 +171,11 @@ if (process.env.S3_ACCESS_KEY &&
         process.env.OSS_BUCKET , {
             region: process.env.OSS_REGION || 'oss-cn-hangzhou',
             bucketPrefix: '',
-            directAccess: directAccess,
-            baseUrl: process.env.OSS_BASE_URL || null
+            directAccess: true,
+            baseUrl: process.env.OSS_BASE_URL || null,
+            baseUrlDirect: process.env.OSS_BASE_URL_DIRECT || null
         });
+    console.log('use oss fileAdapter');
 }
 
 var emailModule = process.env.EMAIL_MODULE;
@@ -261,7 +263,7 @@ var api = new ParseServer({
     cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
 
     appId: process.env.APP_ID || 'myAppId',
-    masterKey: process.env.MASTER_KEY, //Add your master key here. Keep it secret!
+    masterKey: process.env.MASTER_KEY || 'myAppSecret', //Add your master key here. Keep it secret!
     serverURL: serverURL,
 
     collectionPrefix: process.env.COLLECTION_PREFIX,
